@@ -31,11 +31,13 @@ class _MyAppState extends State<MyApp> {
         ),
         body: [
           HomePage(),
-          Players()
+          Players(), 
+          AddPlaque() 
         ][_currentIndex], 
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: (index) => setCurrentIndex(index), 
+          type: BottomNavigationBarType.fixed,
           selectedItemColor: Colors.blue, 
           unselectedItemColor: Colors.grey,
           iconSize: 32,
@@ -48,6 +50,10 @@ class _MyAppState extends State<MyApp> {
             BottomNavigationBarItem(
               icon: Icon(Icons.calendar_month),
               label: 'Joueurs'
+            ), 
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add),
+              label: 'Ajout'
             ), 
           ], 
         ), 
