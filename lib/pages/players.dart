@@ -11,58 +11,58 @@ class Players extends StatelessWidget {
       ),
       body: Center(
         child: ListView(
-						children: [
-							Card(
-								child: ListTile(
-									leading: Image.asset("assets/images/logof.png"),
-									title: Text("Cypcyp"), 
-									subtitle: Text("créateur"), 
-								), 
-							), 
-							Card(
-								child: ListTile(
-									leading: Image.asset("assets/images/logof.png"),
-									title: Text("Le Bouton d'Or"), 
-									subtitle: Text("Challengeuse"), 
-								), 
-							),  
-							Card(
-								child: ListTile(
-									leading: Image.asset("assets/images/logof.png"),
-									title: Text("La Grande & Le Jeannot Junior"), 
-									subtitle: Text("Parents"), 
-								), 
-							), 
-							Card(
-								child: ListTile(
-									leading: Image.asset("assets/images/logof.png"),
-									title: Text("La Sisou de Papanou"), 
-									subtitle: Text("Voyageuse"), 
-								), 
-							), 
-							Card(
-								child: ListTile(
-									leading: Image.asset("assets/images/logof.png"),
-									title: Text("Les Gauthier Juniors"), 
-									subtitle: Text("Quoicoubeh"), 
-								), 
-							), 
-							Card(
-								child: ListTile(
-									leading: Image.asset("assets/images/logof.png"),
-									title: Text("Oncle H"), 
-									subtitle: Text("VVette"), 
-								), 
-							), 
-							Card(
-								child: ListTile(
-									leading: Image.asset("assets/images/logof.png"),
-									title: Text("Le Géniteur"), 
-									subtitle: Text("Géniteur"), 
-								), 
-							), 
-						], 
-					), 
+          children: [
+            Card(
+              child: ListTile(
+                leading: Image.asset("assets/images/logof.png"),
+                title: Text("Cypcyp"),
+                subtitle: Text("créateur"),
+              ),
+            ),
+            Card(
+              child: ListTile(
+                leading: Image.asset("assets/images/logof.png"),
+                title: Text("Le Bouton d'Or"),
+                subtitle: Text("Challengeuse"),
+              ),
+            ),
+            Card(
+              child: ListTile(
+                leading: Image.asset("assets/images/logof.png"),
+                title: Text("La Grande & Le Jeannot Junior"),
+                subtitle: Text("Parents"),
+              ),
+            ),
+            Card(
+              child: ListTile(
+                leading: Image.asset("assets/images/logof.png"),
+                title: Text("La Sisou de Papanou"),
+                subtitle: Text("Voyageuse"),
+              ),
+            ),
+            Card(
+              child: ListTile(
+                leading: Image.asset("assets/images/logof.png"),
+                title: Text("Les Gauthier Juniors"),
+                subtitle: Text("Quoicoubeh"),
+              ),
+            ),
+            Card(
+              child: ListTile(
+                leading: Image.asset("assets/images/logof.png"),
+                title: Text("Oncle H"),
+                subtitle: Text("VVette"),
+              ),
+            ),
+            Card(
+              child: ListTile(
+                leading: Image.asset("assets/images/logof.png"),
+                title: Text("Le Géniteur"),
+                subtitle: Text("Géniteur"),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
