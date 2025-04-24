@@ -27,7 +27,11 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text("Dernière Plaque"), 
+          title: [
+            Text("Dernière Plaque"), 
+            Text("Joueurs"), 
+            Text("Nouvelle Plaque")
+          ][_currentIndex], 
         ),
         body: [
           HomePage(),
