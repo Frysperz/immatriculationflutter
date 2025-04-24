@@ -5,13 +5,8 @@ class AddPlaque extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Ajout d\'une nouvelle plaque') ,
-      ),
-      body: Center(
-        child: Text('Prochainement disponible'),
-      ),
+    return Center(
+        child: Text('Ajouter une nouvelle plaque'), 
     );
   }
 }
