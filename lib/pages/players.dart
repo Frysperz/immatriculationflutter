@@ -7,7 +7,7 @@ class Players extends StatefulWidget {
   State<Players> createState() => _PlayersState();
 } 
 
-class _Players State extends State<Players> {
+class _PlayersState extends State<Players> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
