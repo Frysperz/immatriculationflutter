@@ -8,11 +8,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Immatriculation Game"),
-      ),
-      body: Center(
+    return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -49,7 +45,6 @@ class HomePage extends StatelessWidget {
             )
           ],
         ),
-      ),
-    );
+      );
   }
 }
