@@ -28,21 +28,6 @@ class HomePage extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             Padding(padding: EdgeInsets.only(top: 20)),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                          pageBuilder: (_, __, ___) => AddPlaque()
-                      )
-                  );
-                },
-                child: Text('Ajouter une plaque',
-                    style: TextStyle(
-                        fontSize: 20
-                    )
-                )
-            )
           ],
         ),
       );
