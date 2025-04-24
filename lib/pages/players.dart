@@ -50,11 +50,7 @@ class _PlayersState extends State<Players> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Liste des joueurs') ,
-      ),
-      body: Center(
+    return Center(
         child: ListView.builder(
           itemCount: players.length, 
           itemBuilder: (context, index) {
@@ -73,7 +69,6 @@ class _PlayersState extends State<Players> {
             );
           },
         ),
-      ),
-    );
+      );
   }
 }
