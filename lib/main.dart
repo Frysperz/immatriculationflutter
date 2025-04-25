@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:immatriculationflutter/pages/home_page.dart';
+import 'package:immatriculationflutter/pages/add_plaque.dart';
+import 'package:immatriculationflutter/pages/players.dart';
 
 void main() {
   runApp(const MyApp());
