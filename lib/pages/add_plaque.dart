@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
 
 class AddPlaque extends StatefulWidget {
@@ -13,7 +15,9 @@ class _AddPlaqueState extends State<AddPlaque> {
   final _formKey = GlobalKey<FormState>();
 
   final plaqueNameController = TextEditingController();
-  String selectedPlayer = 'player1';
+  String selectedPlayer = 'Cypcyp';
+  String selectedType = 'Recente classique';
+  DateTime selectedDate = DateTime.now();
 
   @override
   void dispose() {
@@ -52,13 +56,13 @@ class _AddPlaqueState extends State<AddPlaque> {
               margin: EdgeInsets.only(bottom: 10), 
               child: DropdownButtonFormField(
                 items: const [
-                  DropdownMenuItem(value: 'player1', child: Text("Cypcyp")),
-                  DropdownMenuItem(value: 'player2', child: Text("Le Bouton d'Or")),
-                   DropdownMenuItem(value: 'player3', child: Text("La Sisou de Papanou")),
-                  DropdownMenuItem(value: 'player4', child: Text("La Grande & Jeannot Junior")),
-                  DropdownMenuItem(value: 'player5', child: Text("Les Gauthier Juniors")),
-                  DropdownMenuItem(value: 'player6', child: Text("Oncle H")),
-                  DropdownMenuItem(value: 'player7', child: Text("Le Géniteur")),
+                  DropdownMenuItem(value: 'Cypcyp', child: Text("Cypcyp")),
+                  DropdownMenuItem(value: 'Le Bouton d\'Or', child: Text("Le Bouton d'Or")),
+                  DropdownMenuItem(value: 'La Sisou de Papanou', child: Text("La Sisou de Papanou")),
+                  DropdownMenuItem(value: 'La Grande & Jeannot Junior', child: Text("La Grande & Jeannot Junior")),
+                  DropdownMenuItem(value: 'Les Gauthier Juniors', child: Text("Les Gauthier Juniors")),
+                  DropdownMenuItem(value: 'Oncle H', child: Text("Oncle H")),
+                  DropdownMenuItem(value: 'Le Géniteur', child: Text("Le Géniteur")),
                 ], 
                 decoration: InputDecoration(
                   border: OutlineInputBorder() 
@@ -70,7 +74,43 @@ class _AddPlaqueState extends State<AddPlaque> {
                   });
                 } 
               ), 
-            ), 
+            ),
+            Container(
+              margin: EdgeInsets.only(bottom: 10),
+              child: DropdownButtonFormField(
+                  items: const [
+                    DropdownMenuItem(value: 'Recente classique', child: Text("Recente classique")),
+                    DropdownMenuItem(value: 'Recente rare', child: Text("Recente rare")),
+                    DropdownMenuItem(value: 'Recente legendaire', child: Text("Recente legendaire")),
+                    DropdownMenuItem(value: 'Quadruplet', child: Text("Quadruplet")),
+                    DropdownMenuItem(value: 'Palindrome', child: Text("Palindrome")),
+                  ],
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder()
+                  ),
+                  value: selectedType,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedType = value!;
+                    });
+                  }
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(bottom: 10),
+              child: DateTimeFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Date',
+                  suffixIcon: Icon(Icons.event_note),
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (DateTime? value) {
+                  setState(() {
+                    selectedDate = value!;
+                  });
+                },
+              ),
+            ),
             SizedBox(
               width: double.infinity, 
               height: 50,
@@ -84,8 +124,14 @@ class _AddPlaqueState extends State<AddPlaque> {
                     );
                     FocusScope.of(context).requestFocus(FocusNode());
 
-                    print("Ajout de la plaque $plaqueName");
-                    print("Plaque trouvée par $selectedPlayer");
+                    // ajout dans la base de donnees
+                    CollectionReference plaquesRef = FirebaseFirestore.instance.collection("Plaques");
+                    plaquesRef.add({
+                      'plaque': plaqueName,
+                      'player': selectedPlayer,
+                      'date': selectedDate,
+                      'type': selectedType
+                    });
                   } 
                 }, 
                 child: Text("Envoyer") 

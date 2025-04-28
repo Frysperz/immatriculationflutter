@@ -13,37 +13,37 @@ class _PlayersState extends State<Players> {
     {
       "pseudo": "Cypcyp", 
       "attribute": "Créateur", 
-      "avatar": "logo48.png"
+      "avatar": "cypcyp.png"
     },
     {
       "pseudo": "Le Bouton d'Or", 
       "attribute": "Femme à marier", 
-      "avatar": "logo48.png"
+      "avatar": "ali.png"
     }, 
     {
       "pseudo": "La Sisou de Papanou", 
       "attribute": "Hébergeuse professionnelle", 
-      "avatar": "logo48.png"
+      "avatar": "sixt.png"
     }, 
     {
       "pseudo": "La Grande & Jeannot Junior", 
       "attribute": "Parents en devenir", 
-      "avatar": "logo48.png"
+      "avatar": "parents.png"
     }, 
     {
       "pseudo": "Les Gauthier Junior", 
       "attribute": "Quoicoubeh", 
-      "avatar": "logo48.png"
+      "avatar": "gauthierjun.png"
     }, 
     {
       "pseudo": "Oncle H", 
       "attribute": "VVette", 
-      "avatar": "logo48.png"
+      "avatar": "vvette.png"
     }, 
     {
       "pseudo": "Le Géniteur", 
       "attribute": "Géniteur professionnel", 
-      "avatar": "logo48.png"
+      "avatar": "eric.png"
     }
   ];
 

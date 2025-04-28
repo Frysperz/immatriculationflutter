@@ -2,8 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:immatriculationflutter/pages/home_page.dart';
 import 'package:immatriculationflutter/pages/add_plaque.dart';
 import 'package:immatriculationflutter/pages/players.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 
@@ -54,7 +63,7 @@ class _MyAppState extends State<MyApp> {
               label: 'Accueil'
             ), 
             BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_month),
+              icon: Icon(Icons.person),
               label: 'Joueurs'
             ), 
             BottomNavigationBarItem(

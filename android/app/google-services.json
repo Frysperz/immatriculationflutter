@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1094085116098",
+    "project_id": "immatriculationgame",
+    "storage_bucket": "immatriculationgame.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1094085116098:android:fcbdd2233fe1c01053fb5b",
+        "android_client_info": {
+          "package_name": "fr.cypcyp.immatriculationflutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZnvWH6m8q8bcqKlebewkq-Gj9eyol7h8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
