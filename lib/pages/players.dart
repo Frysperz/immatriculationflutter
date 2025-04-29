@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Players extends StatefulWidget {
@@ -9,66 +10,66 @@ class Players extends StatefulWidget {
 
 class _PlayersState extends State<Players> {
 
-  final players = [
-    {
-      "pseudo": "Cypcyp", 
-      "attribute": "Créateur", 
-      "avatar": "cypcyp.png"
-    },
-    {
-      "pseudo": "Le Bouton d'Or", 
-      "attribute": "Femme à marier", 
-      "avatar": "ali.png"
-    }, 
-    {
-      "pseudo": "La Sisou de Papanou", 
-      "attribute": "Hébergeuse professionnelle", 
-      "avatar": "sixt.png"
-    }, 
-    {
-      "pseudo": "La Grande & Jeannot Junior", 
-      "attribute": "Parents en devenir", 
-      "avatar": "parents.png"
-    }, 
-    {
-      "pseudo": "Les Gauthier Junior", 
-      "attribute": "Quoicoubeh", 
-      "avatar": "gauthierjun.png"
-    }, 
-    {
-      "pseudo": "Oncle H", 
-      "attribute": "VVette", 
-      "avatar": "vvette.png"
-    }, 
-    {
-      "pseudo": "Le Géniteur", 
-      "attribute": "Géniteur professionnel", 
-      "avatar": "eric.png"
-    }
-  ];
-
-
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: ListView.builder(
-          itemCount: players.length, 
-          itemBuilder: (context, index) {
-            final player = players[index];
-            final pseudo = player['pseudo'];
-            final attribute = player['attribute'];
-            final avatar = player['avatar'];
-
-            return Card(
-              child: ListTile(
-                leading: Image.asset("assets/images/$avatar"),
-                title: Text("$pseudo"),
-                subtitle: Text("$attribute"),
-                trailing: Icon(Icons.more_vert),
-              ),
-            );
-          },
+    return DefaultTabController(
+      initialIndex: 0,
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 0,
+          bottom: TabBar(
+            tabs: <Widget>[
+              Tab(icon: Icon(Icons.person)),
+              Tab(icon: Icon(Icons.emoji_events)),
+            ],
+          ),
         ),
-      );
+        body: TabBarView(
+          children: <Widget>[
+            Center(
+              child: StreamBuilder(
+                stream: FirebaseFirestore.instance.collection("Players").snapshots(),
+                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
+
+                  if (!snapshot.hasData) {
+                    return Text("Aucun joueur");
+                  }
+
+                  List<dynamic> players = [];
+                  snapshot.data!.docs.forEach((element) {
+                    players.add(element);
+                  });
+
+                  return Center(
+                    child: ListView.builder(
+                      itemCount: players.length,
+                      itemBuilder: (context, index) {
+                        final player = players[index];
+                        final pseudo = player['pseudo'];
+                        final attribute = player['attribute'];
+                        final avatar = player['avatar'];
+
+                        return Card(
+                          child: ListTile(
+                            leading: Image.asset("assets/images/$avatar"),
+                            title: Text("$pseudo"),
+                            subtitle: Text("$attribute"),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                } ,
+              ),
+            ),
+            Center(child: Text("It's rainy here")),
+          ],
+        ),
+      ),
+    );
   }
 }

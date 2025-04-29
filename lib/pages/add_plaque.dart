@@ -12,6 +12,26 @@ class AddPlaque extends StatefulWidget {
 
 class _AddPlaqueState extends State<AddPlaque> {
 
+  final playersIds = {
+    "La Sisou de Papanou" : "6vEwm61Sq7XfWgBOwXR6",
+    "Les Gauthier Juniors": "IgEC2hYaxCKhJfSmTc0A",
+    "Le Geniteur" : "OmCp4pnwqhN4zDcHyAfF",
+    "Lily" : "gkrBFplwSOB3bsQdGnIj",
+    "Cypcyp" : "iyWdqEUScwdMY1KfJAU5",
+    "Le Bouton d'Or" : "mMnH2OdDlhUnhdPzT1wm",
+    "VVette" : "ok1Ufk6C553qonNOssCO",
+    "La Grande & Jeannot Junior" : "uNJiF4HD9vNoETIeVFmf"
+  };
+
+  final pointsPlaques = {
+    "Recente classique" : 1,
+    "Recente rare" : 3,
+    "Recente legendaire" : 10,
+    "Quadruplet" : 5,
+    "Quadruplet legendaire" : 10,
+    "Palindrome" : 3
+  };
+
   final _formKey = GlobalKey<FormState>();
 
   final plaqueNameController = TextEditingController();
@@ -83,6 +103,7 @@ class _AddPlaqueState extends State<AddPlaque> {
                     DropdownMenuItem(value: 'Recente rare', child: Text("Recente rare")),
                     DropdownMenuItem(value: 'Recente legendaire', child: Text("Recente legendaire")),
                     DropdownMenuItem(value: 'Quadruplet', child: Text("Quadruplet")),
+                    DropdownMenuItem(value: 'Quadruplet legendaire', child: Text("Quadruplet legendaire")),
                     DropdownMenuItem(value: 'Palindrome', child: Text("Palindrome")),
                   ],
                   decoration: InputDecoration(
@@ -132,6 +153,20 @@ class _AddPlaqueState extends State<AddPlaque> {
                       'date': selectedDate,
                       'type': selectedType
                     });
+
+                    CollectionReference playersRef = FirebaseFirestore.instance.collection("Players");
+                    // get player points before update
+                    final docRef = playersRef.doc(playersIds[selectedPlayer]);
+                    docRef.get().then(
+                          (DocumentSnapshot doc) {
+                        final data = doc.data() as Map<String, dynamic>;
+                        final currentPoints = data["points"];
+                        final points = {"points": pointsPlaques[selectedType]! + currentPoints};
+                        docRef.set(points, SetOptions(merge: true));
+                        },
+                      onError: (e) => Text("Error getting document: $e"),
+                    );
+
                   } 
                 }, 
                 child: Text("Envoyer") 

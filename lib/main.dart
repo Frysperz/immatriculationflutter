@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
       home: Scaffold(
         appBar: AppBar(
           title: [
-            Text("Dernière Plaque"), 
+            Text("Plaques"),
             Text("Joueurs"), 
             Text("Nouvelle Plaque")
           ][_currentIndex], 
