@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
                 child: ColoredBox(
                   color: Colors.black12,
                   child: Center(
-                    child: Text("$plaqueName",
+                    child: Text(plaqueName,
                         style: TextStyle(
                             fontSize: height/1.6,
                             fontFamily: 'bebas'
@@ -83,9 +83,9 @@ class _HomePageState extends State<HomePage> {
           }
 
           List<dynamic> plaques = [];
-          snapshot.data!.docs.forEach((element) {
+          for (var element in snapshot.data!.docs) {
             plaques.add(element);
-          });
+          }
 
           return Column(
             children: [

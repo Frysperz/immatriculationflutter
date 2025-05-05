@@ -40,9 +40,9 @@ class _PlayersState extends State<Players> {
                   }
 
                   List<dynamic> players = [];
-                  snapshot.data!.docs.forEach((element) {
+                  for (var element in snapshot.data!.docs) {
                     players.add(element);
-                  });
+                  }
 
                   return Center(
                     child: ListView.builder(
