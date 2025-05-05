@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 class HomePage extends StatefulWidget {
@@ -52,10 +52,10 @@ class _HomePageState extends State<HomePage> {
       itemBuilder: (_, index) {
         final plaque = plaques[index + 1];
         final plaqueName = plaque['plaque'];
-        final player = plaque['player'];
-        final type = plaque['type'];
-        final Timestamp timestamp = plaque['date'];
-        final date = DateFormat.MMMMd('fr_CA').format(timestamp.toDate());
+        // final player = plaque['player'];
+        // final type = plaque['type'];
+        // final Timestamp timestamp = plaque['date'];
+        // final date = DateFormat.MMMMd('fr_CA').format(timestamp.toDate());
 
         return makePlaque(plaqueName, 140, 50);
       },
@@ -114,7 +114,9 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              listPlaques(plaques),
+              Expanded(
+                  child: listPlaques(plaques)
+              ),
             ],
           );
         } ,

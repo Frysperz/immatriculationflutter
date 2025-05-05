@@ -46,7 +46,7 @@ class _MyAppState extends State<MyApp> {
         ),
         body: [
           HomePage(),
-          Players(), 
+          Players(),
           AddPlaque() 
         ][_currentIndex], 
         bottomNavigationBar: BottomNavigationBar(

@@ -134,6 +134,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.0"
+  flutter_podium:
+    dependency: "direct main"
+    description:
+      name: flutter_podium
+      sha256: d9429b2d3eacd22036dc847288bcb3f558bb77c92959dee97bcc53250f1ab4b1
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.5"
   flutter_test:
     dependency: "direct dev"
     description: flutter
