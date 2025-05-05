@@ -60,27 +60,25 @@ class _PlayersState extends State<Players> {
               return TabBarView(
                 children: <Widget>[
                   Center(
-                    child: Expanded(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: players.length,
-                        itemBuilder: (context, index) {
-                          final player = players[index];
-                          final pseudo = player['pseudo'];
-                          final attribute = player['attribute'];
-                          final avatar = player['avatar'];
-                          final points = player['points'];
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: players.length,
+                      itemBuilder: (context, index) {
+                        final player = players[index];
+                        final pseudo = player['pseudo'];
+                        final attribute = player['attribute'];
+                        final avatar = player['avatar'];
+                        final points = player['points'];
 
-                          return Card(
-                            child: ListTile(
-                              leading: Image.asset("assets/images/$avatar"),
-                              title: Text("$pseudo"),
-                              subtitle: Text("$attribute"),
-                              trailing: Text("$points"),
-                            ),
-                          );
-                        },
-                      ),
+                        return Card(
+                          child: ListTile(
+                            leading: Image.asset("assets/images/$avatar"),
+                            title: Text("$pseudo"),
+                            subtitle: Text("$attribute"),
+                            trailing: Text("$points"),
+                          ),
+                        );
+                      },
                     ),
                   ),
                   Center(
