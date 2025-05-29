@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:immatriculationflutter/pages/group_page.dart';
 import 'package:immatriculationflutter/pages/home_page.dart';
 import 'package:immatriculationflutter/pages/add_plaque.dart';
 import 'package:immatriculationflutter/pages/players.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:immatriculationflutter/pages/rules_page.dart';
 import 'firebase_options.dart';
 
 
@@ -37,17 +39,22 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: [
             Text("Plaques"),
             Text("Joueurs"), 
-            Text("Nouvelle Plaque")
+            Text("Nouvelle Plaque"),
+            Text(""),
+            Text("Groupes")
           ][_currentIndex], 
         ),
         body: [
           HomePage(),
           Players(),
-          AddPlaque() 
+          AddPlaque(),
+          RulesPage(),
+          GroupPage()
         ][_currentIndex], 
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
@@ -69,7 +76,15 @@ class _MyAppState extends State<MyApp> {
             BottomNavigationBarItem(
               icon: Icon(Icons.add),
               label: 'Ajout'
-            ), 
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.book),
+                label: 'Règles'
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.pageview),
+                label: 'Groupes'
+            ),
           ], 
         ), 
       ),

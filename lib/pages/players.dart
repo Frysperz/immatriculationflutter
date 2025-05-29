@@ -11,11 +11,23 @@ class Players extends StatefulWidget {
 
 class _PlayersState extends State<Players> {
 
+  final _formKey = GlobalKey<FormState>();
+
+  final playerNameController = TextEditingController();
+  final attributeController = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    playerNameController.dispose();
+    attributeController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       initialIndex: 0,
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 0,
@@ -23,6 +35,7 @@ class _PlayersState extends State<Players> {
             tabs: <Widget>[
               Tab(icon: Icon(Icons.person)),
               Tab(icon: Icon(Icons.emoji_events)),
+              Tab(icon: Icon(Icons.add))
             ],
           ),
         ),
@@ -73,9 +86,14 @@ class _PlayersState extends State<Players> {
                         return Card(
                           child: ListTile(
                             leading: Image.asset("assets/images/$avatar"),
-                            title: Text("$pseudo"),
-                            subtitle: Text("$attribute"),
-                            trailing: Text("$points"),
+                            title: Center(child: Text("$pseudo")),
+                            subtitle: Center(child: Text("$attribute")),
+                            trailing: Text("$points",
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.pink
+                            ),
+                            ),
                           ),
                         );
                       },
@@ -85,41 +103,133 @@ class _PlayersState extends State<Players> {
                     child: Column(
                       children: [
                         SizedBox(
-                          height: 320,
-                          width: double.infinity,
-                          child: Podium(
-                            firstPosition: Column(
-                              children: [
-                                Image.asset("assets/images/$avatarFirstPlayer"),
-                                Text(pseudoFirstPlayer),
-                                Text("$pointsFirstPlayer")
-                              ],
-                            ),
-                            secondPosition: Column(
-                              children: [
-                                Image.asset("assets/images/$avatarSecondPlayer"),
-                                Text(pseudoSecondPlayer),
-                                Text("$pointsSecondPlayer")
-                              ],
-                            ),
-                            thirdPosition: Column(
-                              children: [
-                                Image.asset("assets/images/$avatarThirdPlayer"),
-                                Text(pseudoThirdPlayer),
-                                Text("$pointsThirdPlayer")
-                              ],
-                            ),
-                            color: Colors.pink,
-                            rankingTextColor: Colors.white,
-                            showRankingNumberInsteadOfText: true,
-                            rankingFontSize: 30,
-                            hideRanking: false,
-                            height: 150,
-                            width: 100,
-                            horizontalSpacing: 3,
+                          height: 50,
+                        ),
+                        Podium(
+                          firstPosition: Column(
+                            children: [
+                              ClipRRect(
+                                  borderRadius: BorderRadius.circular(50.0),
+                                  child: Image.asset("assets/images/$avatarFirstPlayer", height: 100, width: 100)
+                              ),
+                              Text(pseudoFirstPlayer),
+                              Text("$pointsFirstPlayer",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.pink
+                              ),)
+                            ],
                           ),
+                          secondPosition: Column(
+                            children: [
+                              ClipRRect(
+                                  borderRadius: BorderRadius.circular(50.0),
+                                  child: Image.asset("assets/images/$avatarSecondPlayer", height: 100, width: 100)
+                              ),
+                              Text(pseudoSecondPlayer),
+                              Text("$pointsSecondPlayer",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.pink
+                              ),)
+                            ],
+                          ),
+                          thirdPosition: Column(
+                            children: [
+                              ClipRRect(
+                                  borderRadius: BorderRadius.circular(50.0),
+                                  child: Image.asset("assets/images/$avatarThirdPlayer", height: 100, width: 100)
+                              ),
+                              Center(child: Text(pseudoThirdPlayer)),
+                              Text("$pointsThirdPlayer",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.pink
+                              ),
+                              )
+                            ],
+                          ),
+                          color: Colors.pink,
+                          rankingTextColor: Colors.white,
+                          showRankingNumberInsteadOfText: true,
+                          rankingFontSize: 30,
+                          hideRanking: false,
+                          height: 150,
+                          width: 100,
+                          horizontalSpacing: 3,
                         ),
                       ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.all(20),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(bottom: 10),
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Nouveau Joueur',
+                                hintText: 'Juste Leblanc',
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Il faut entrer un nom";
+                                }
+                                return null;
+                              },
+                              controller: playerNameController,
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(bottom: 10),
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Description du joueur',
+                                hintText: 'Auteur du petit cheval de manege',
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Il faut entrer une description";
+                                }
+                                return null;
+                              },
+                              controller: attributeController,
+                            ),
+                          ),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()){
+                                    final playerName = playerNameController.text;
+                                    final attribute = attributeController.text;
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text("Envoi en cours..."))
+                                    );
+                                    FocusScope.of(context).requestFocus(FocusNode());
+
+                                    // ajout dans la base de donnees
+                                    CollectionReference playersRef = FirebaseFirestore.instance.collection("Players");
+                                    playersRef.add({
+                                      'attribute': attribute,
+                                      'pseudo': playerName,
+                                      'points': 0,
+                                      'avatar': "cypcyp.png"
+                                    });
+                                  }
+                                },
+                                child: Text("Envoyer")
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ],

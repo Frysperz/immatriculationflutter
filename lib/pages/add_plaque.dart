@@ -1,6 +1,43 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+class PlaqueTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    // final regEx = RegExp(r'^[A-Z]{2}[-]\d{3}[-][A-Z]{2}');
+    RegExp regEx;
+    switch (newValue.text.length) {
+      case 0:
+        regEx = RegExp(r'');
+        break;
+      case 1:
+        regEx = RegExp(r'[a-zA-Z]');
+      case 2:
+        regEx = RegExp(r'[a-zA-Z]{2}');
+      case 3:
+        regEx = RegExp(r'[a-zA-Z]{2}[-]');
+      case 4:
+        regEx = RegExp(r'[a-zA-Z]{2}[-]\d');
+      case 5:
+        regEx = RegExp(r'[a-zA-Z]{2}[-]\d{2}');
+      case 6:
+        regEx = RegExp(r'[a-zA-Z]{2}[-]\d{3}');
+      case 7:
+        regEx = RegExp(r'[a-zA-Z]{2}[-]\d{3}[-]');
+      case 8:
+        regEx = RegExp(r'[a-zA-Z]{2}[-]\d{3}[-][a-zA-Z]');
+      default:
+        regEx = RegExp(r'[a-zA-Z]{2}[-]\d{3}[-][a-zA-Z]{2}');
+    }
+    final String newString = regEx.stringMatch(newValue.text) ?? '';
+    if ((newValue.text.length == 2 || newValue.text.length == 6) && oldValue.text.length == newValue.text.length - 1) {
+      return newString == newValue.text ? TextEditingValue(text: '${newValue.text}-') : oldValue;
+    }
+    return newString == newValue.text ? newValue : oldValue;
+  }
+}
 
 class AddPlaque extends StatefulWidget {
   const AddPlaque({super.key});
@@ -15,7 +52,7 @@ class _AddPlaqueState extends State<AddPlaque> {
   final playersIds = {
     "La Sisou de Papanou" : "6vEwm61Sq7XfWgBOwXR6",
     "Les Gauthier Juniors": "IgEC2hYaxCKhJfSmTc0A",
-    "Le Geniteur" : "OmCp4pnwqhN4zDcHyAfF",
+    "Le Géniteur" : "OmCp4pnwqhN4zDcHyAfF",
     "Lily" : "gkrBFplwSOB3bsQdGnIj",
     "Cypcyp" : "iyWdqEUScwdMY1KfJAU5",
     "Le Bouton d'Or" : "mMnH2OdDlhUnhdPzT1wm",
@@ -24,19 +61,21 @@ class _AddPlaqueState extends State<AddPlaque> {
   };
 
   final pointsPlaques = {
-    "Recente classique" : 1,
-    "Recente rare" : 3,
-    "Recente legendaire" : 10,
+    "Récente classique" : 1,
+    "Récente rare" : 3,
+    "Récente légendaire" : 10,
     "Quadruplet" : 5,
-    "Quadruplet legendaire" : 10,
+    "Quadruplet légendaire" : 10,
     "Palindrome" : 3
   };
 
   final _formKey = GlobalKey<FormState>();
 
+  late FocusNode myFocusNode = FocusNode();
+
   final plaqueNameController = TextEditingController();
   String selectedPlayer = 'Cypcyp';
-  String selectedType = 'Recente classique';
+  String selectedType = 'Récente classique';
   DateTime selectedDate = DateTime.now();
 
   @override
@@ -50,30 +89,48 @@ class _AddPlaqueState extends State<AddPlaque> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(20),
+      margin: EdgeInsets.all(15),
       child: Form(
-        key: _formKey, 
+        key: _formKey,
         child: Column(
           children: [
             Container(
               margin: EdgeInsets.only(bottom: 10),
               child: TextFormField(
+                keyboardType: TextInputType.visiblePassword,
+                // keyboardType: (plaqueNameController.text.length >= 3 && plaqueNameController.text.length <= 6) ? TextInputType.number : TextInputType.name,
                 decoration: InputDecoration(
-                  labelText: 'Nouvelle Plaque', 
-                  hintText: 'AA-123-AA', 
-                  border: OutlineInputBorder(), 
+                  labelText: 'Nouvelle Plaque',
+                  hintText: 'AA-123-AA',
+                  border: OutlineInputBorder(),
                 ),
+                focusNode: myFocusNode,
+                onChanged: (text) {
+                  final newText = text.toUpperCase();
+                  if (plaqueNameController.text != newText) {
+                    plaqueNameController.value = plaqueNameController.value.copyWith(text: newText);
+                  }
+                  // if (plaqueNameController.text.length == 3 || plaqueNameController.text.length == 7){
+                  //   myFocusNode.unfocus();
+                  //   Future.delayed(const Duration(milliseconds: 50)).then((value) {
+                  //     WidgetsBinding.instance.addPostFrameCallback((_) => myFocusNode.requestFocus(),);
+                  //   });
+                  // }
+                },
+                inputFormatters: [
+                  PlaqueTextInputFormatter()
+                ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Il faut entrer une plaque";
                   }
                   return null;
                 },
-                controller: plaqueNameController, 
-              ), 
+                controller: plaqueNameController,
+              ),
             ),
             Container(
-              margin: EdgeInsets.only(bottom: 10), 
+              margin: EdgeInsets.only(bottom: 10),
               child: DropdownButtonFormField(
                 items: const [
                   DropdownMenuItem(value: 'Cypcyp', child: Text("Cypcyp")),
@@ -81,29 +138,29 @@ class _AddPlaqueState extends State<AddPlaque> {
                   DropdownMenuItem(value: 'La Sisou de Papanou', child: Text("La Sisou de Papanou")),
                   DropdownMenuItem(value: 'La Grande & Jeannot Junior', child: Text("La Grande & Jeannot Junior")),
                   DropdownMenuItem(value: 'Les Gauthier Juniors', child: Text("Les Gauthier Juniors")),
-                  DropdownMenuItem(value: 'Oncle H', child: Text("Oncle H")),
+                  DropdownMenuItem(value: 'VVette', child: Text("VVette")),
                   DropdownMenuItem(value: 'Le Géniteur', child: Text("Le Géniteur")),
-                ], 
+                ],
                 decoration: InputDecoration(
-                  border: OutlineInputBorder() 
-                ), 
-                value: selectedPlayer, 
+                  border: OutlineInputBorder()
+                ),
+                value: selectedPlayer,
                 onChanged: (value) {
                   setState(() {
                     selectedPlayer = value!;
                   });
-                } 
-              ), 
+                }
+              ),
             ),
             Container(
               margin: EdgeInsets.only(bottom: 10),
               child: DropdownButtonFormField(
                   items: const [
-                    DropdownMenuItem(value: 'Recente classique', child: Text("Recente classique")),
-                    DropdownMenuItem(value: 'Recente rare', child: Text("Recente rare")),
-                    DropdownMenuItem(value: 'Recente legendaire', child: Text("Recente legendaire")),
+                    DropdownMenuItem(value: 'Récente classique', child: Text("Récente classique")),
+                    DropdownMenuItem(value: 'Récente rare', child: Text("Récente rare")),
+                    DropdownMenuItem(value: 'Récente légendaire', child: Text("Récente legendaire")),
                     DropdownMenuItem(value: 'Quadruplet', child: Text("Quadruplet")),
-                    DropdownMenuItem(value: 'Quadruplet legendaire', child: Text("Quadruplet legendaire")),
+                    DropdownMenuItem(value: 'Quadruplet légendaire', child: Text("Quadruplet légendaire")),
                     DropdownMenuItem(value: 'Palindrome', child: Text("Palindrome")),
                   ],
                   decoration: InputDecoration(
@@ -133,7 +190,7 @@ class _AddPlaqueState extends State<AddPlaque> {
               ),
             ),
             SizedBox(
-              width: double.infinity, 
+              width: double.infinity,
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
@@ -141,7 +198,7 @@ class _AddPlaqueState extends State<AddPlaque> {
                     final plaqueName = plaqueNameController.text;
 
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Envoi en cours...")) 
+                      const SnackBar(content: Text("Envoi en cours..."))
                     );
                     FocusScope.of(context).requestFocus(FocusNode());
 
@@ -160,21 +217,24 @@ class _AddPlaqueState extends State<AddPlaque> {
                     docRef.get().then(
                           (DocumentSnapshot doc) {
                         final data = doc.data() as Map<String, dynamic>;
+                        print(data);
                         final currentPoints = data["points"];
+                        print('printing current points : $currentPoints');
                         final points = {"points": pointsPlaques[selectedType]! + currentPoints};
+                        print('printing final points : $points');
                         docRef.set(points, SetOptions(merge: true));
                         },
                       onError: (e) => Text("Error getting document: $e"),
                     );
 
-                  } 
-                }, 
-                child: Text("Envoyer") 
-              ), 
-            ) 
-          ], 
-        ), 
-      ), 
+                  }
+                },
+                child: Text("Envoyer")
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
