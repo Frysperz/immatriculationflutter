@@ -200,7 +200,6 @@ class _JoinGroupPageState extends State<JoinGroupPage> {
                     groupeRef.get().then((value) {
                       final motdepasse = value['password'];
                       if (motdepasse == mdp) {
-                        print("mdp match");
                         Navigator.push(
                             context,
                             PageRouteBuilder(
