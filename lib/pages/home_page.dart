@@ -245,7 +245,7 @@ class _HomePageState extends State<HomePage> {
                 width: double.infinity,
                 child: Container(
                   margin: EdgeInsets.only(left: 15, bottom: 15),
-                  child: Text("Derniere Plaque",
+                  child: Text("Dernière Plaque",
                     style: TextStyle(
                     fontSize: 25
                     ),
@@ -258,7 +258,7 @@ class _HomePageState extends State<HomePage> {
                 width: double.infinity,
                 child: Container(
                   margin: EdgeInsets.all(15),
-                  child: Text("Plaques recentes",
+                  child: Text("Plaques récentes",
                     style: TextStyle(
                       fontSize: 25
                     ),

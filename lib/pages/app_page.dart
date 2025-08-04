@@ -1,22 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:immatriculationflutter/pages/group_page.dart';
+import 'package:immatriculationflutter/main.dart';
 import 'package:immatriculationflutter/pages/home_page.dart';
 import 'package:immatriculationflutter/pages/add_plaque.dart';
 import 'package:immatriculationflutter/pages/players.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:immatriculationflutter/pages/rules_page.dart';
-// import 'firebase_options.dart';
-//
-//
-// void main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//
-//   await Firebase.initializeApp(
-//     options: DefaultFirebaseOptions.currentPlatform,
-//   );
-//
-//   runApp(const MyApp());
-// }
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AppPage extends StatefulWidget {
   const AppPage({super.key});
@@ -35,6 +23,46 @@ class _AppPageState extends State<AppPage> {
     });
   }
 
+  Future<void> showLogoutConfirmation() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Vous allez vous déconnecter, voulez-vous supprimer les données du groupe ?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Retour'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Non', style: TextStyle(color: Colors.red,),),
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => MyApp()));
+              },
+            ),
+            TextButton(
+              child: const Text('Oui', style: TextStyle(color: Colors.blue,),),
+              onPressed: () async {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(duration: Duration(seconds: 1), content: Text("Suppression des données en cours..."))
+                );
+                SharedPreferences preferences = await SharedPreferences.getInstance();
+                await preferences.clear();
+                if (context.mounted) {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => MyApp()));
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -47,6 +75,14 @@ class _AppPageState extends State<AppPage> {
             Text("Nouvelle Plaque"),
             Text(""),
           ][_currentIndex],
+          actions: [
+              IconButton(
+                icon: const Icon(Icons.logout),
+                onPressed: () {
+                  showLogoutConfirmation();
+                },
+              ),
+            ],
         ),
         body: [
           HomePage(),
@@ -85,5 +121,6 @@ class _AppPageState extends State<AppPage> {
     );
   }
 }
+
 
 
