@@ -9,7 +9,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final DocumentReference<Object?> groupeRef;
+  const HomePage({ super.key, required this.groupeRef });
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -96,12 +97,14 @@ class _HomePageState extends State<HomePage> {
                   FocusScope.of(context).requestFocus(FocusNode());
 
                   // suppression dans la base de donnees
-                  final plaquesRef = FirebaseFirestore.instance.collection('Plaques');
+                  // final plaquesRef = FirebaseFirestore.instance.collection('Groupes').doc('GTHR040203').collection('Plaques');
+                  final plaquesRef = widget.groupeRef.collection("Plaques");
                   plaquesRef
                       .doc(plaque.id) // <-- Doc ID to be deleted.
                       .delete();
                   // suppression des points associés dans la base de donnees
-                  final playerRef = FirebaseFirestore.instance.collection('Players').doc(playersIds[plaque.player]);
+                  // final playerRef = FirebaseFirestore.instance.collection('Groupes').doc('GTHR040203').collection('Players').doc(playersIds[plaque.player]);
+                  final playerRef = widget.groupeRef.collection("Players").doc(playersIds[plaque.player]);
                   playerRef// <-- Doc ID to be deleted.
                       .get()
                       .then(
@@ -224,19 +227,20 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Center(
       child: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection("Plaques").orderBy('date', descending: true).snapshots(),
+        // stream: FirebaseFirestore.instance.collection('Groupes').doc('GTHR040203').collection("Plaques").orderBy('date', descending: true).snapshots(),
+        stream: widget.groupeRef.collection("Plaques").orderBy('date',descending: true).snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CircularProgressIndicator();
           }
 
-          if (!snapshot.hasData) {
-            return Text("Aucune Plaque");
-          }
-
           List<Plaque> plaques = [];
           for (var data in snapshot.data!.docs) {
             plaques.add(Plaque.fromData(data, data.reference.id));
+          }
+
+          if (plaques.length == 0) {
+            return Text("Aucune Plaque");
           }
 
           return Column(

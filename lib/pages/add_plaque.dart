@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:developer';
 
 class PlaqueTextInputFormatter extends TextInputFormatter {
   @override
@@ -17,19 +18,19 @@ class PlaqueTextInputFormatter extends TextInputFormatter {
       case 2:
         regEx = RegExp(r'[a-zA-Z]{2}');
       case 3:
-        regEx = RegExp(r'[a-zA-Z]{2}[-]');
+        regEx = RegExp(r'[a-zA-Z]{2}-');
       case 4:
-        regEx = RegExp(r'[a-zA-Z]{2}[-]\d');
+        regEx = RegExp(r'[a-zA-Z]{2}-\d');
       case 5:
-        regEx = RegExp(r'[a-zA-Z]{2}[-]\d{2}');
+        regEx = RegExp(r'[a-zA-Z]{2}-\d{2}');
       case 6:
-        regEx = RegExp(r'[a-zA-Z]{2}[-]\d{3}');
+        regEx = RegExp(r'[a-zA-Z]{2}-\d{3}');
       case 7:
-        regEx = RegExp(r'[a-zA-Z]{2}[-]\d{3}[-]');
+        regEx = RegExp(r'[a-zA-Z]{2}-\d{3}-');
       case 8:
-        regEx = RegExp(r'[a-zA-Z]{2}[-]\d{3}[-][a-zA-Z]');
+        regEx = RegExp(r'[a-zA-Z]{2}-\d{3}-[a-zA-Z]');
       default:
-        regEx = RegExp(r'[a-zA-Z]{2}[-]\d{3}[-][a-zA-Z]{2}');
+        regEx = RegExp(r'[a-zA-Z]{2}-\d{3}-[a-zA-Z]{2}');
     }
     final String newString = regEx.stringMatch(newValue.text) ?? '';
     if ((newValue.text.length == 2 || newValue.text.length == 6) && oldValue.text.length == newValue.text.length - 1) {
@@ -40,7 +41,8 @@ class PlaqueTextInputFormatter extends TextInputFormatter {
 }
 
 class AddPlaque extends StatefulWidget {
-  const AddPlaque({super.key});
+  final DocumentReference<Object?> groupeRef;
+  const AddPlaque({super.key, required this.groupeRef});
 
   @override
   State<AddPlaque> createState() => _AddPlaqueState();
@@ -74,7 +76,7 @@ class _AddPlaqueState extends State<AddPlaque> {
   late FocusNode myFocusNode = FocusNode();
 
   final plaqueNameController = TextEditingController();
-  String selectedPlayer = 'Cypcyp';
+  late String selectedPlayer;
   String selectedType = 'Récente classique';
   DateTime selectedDate = DateTime.now();
 
@@ -129,28 +131,69 @@ class _AddPlaqueState extends State<AddPlaque> {
                 controller: plaqueNameController,
               ),
             ),
-            Container(
-              margin: EdgeInsets.only(bottom: 10),
-              child: DropdownButtonFormField(
-                items: const [
-                  DropdownMenuItem(value: 'Cypcyp', child: Text("Cypcyp")),
-                  DropdownMenuItem(value: 'Le Bouton d\'Or', child: Text("Le Bouton d'Or")),
-                  DropdownMenuItem(value: 'La Sisou de Papanou', child: Text("La Sisou de Papanou")),
-                  DropdownMenuItem(value: 'La Grande & Jeannot Junior', child: Text("La Grande & Jeannot Junior")),
-                  DropdownMenuItem(value: 'Les Gauthier Juniors', child: Text("Les Gauthier Juniors")),
-                  DropdownMenuItem(value: 'VVette', child: Text("VVette")),
-                  DropdownMenuItem(value: 'Le Géniteur', child: Text("Le Géniteur")),
-                ],
-                decoration: InputDecoration(
-                  border: OutlineInputBorder()
-                ),
-                value: selectedPlayer,
-                onChanged: (value) {
-                  setState(() {
-                    selectedPlayer = value!;
-                  });
+            // Container(
+            //   margin: EdgeInsets.only(bottom: 10),
+            //   child: DropdownButtonFormField(
+            //     items: const [
+            //       DropdownMenuItem(value: 'Cypcyp', child: Text("Cypcyp")),
+            //       DropdownMenuItem(value: 'Le Bouton d\'Or', child: Text("Le Bouton d'Or")),
+            //       DropdownMenuItem(value: 'La Sisou de Papanou', child: Text("La Sisou de Papanou")),
+            //       DropdownMenuItem(value: 'La Grande & Jeannot Junior', child: Text("La Grande & Jeannot Junior")),
+            //       DropdownMenuItem(value: 'Les Gauthier Juniors', child: Text("Les Gauthier Juniors")),
+            //       DropdownMenuItem(value: 'VVette', child: Text("VVette")),
+            //       DropdownMenuItem(value: 'Le Géniteur', child: Text("Le Géniteur")),
+            //     ],
+            //     decoration: InputDecoration(
+            //       border: OutlineInputBorder()
+            //     ),
+            //     value: selectedPlayer,
+            //     onChanged: (value) {
+            //       setState(() {
+            //         selectedPlayer = value!;
+            //       });
+            //     }
+            //   ),
+            // ),
+            StreamBuilder(
+              stream: widget.groupeRef.collection("Players").orderBy('points', descending: true).snapshots(),
+              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
                 }
-              ),
+
+                if (!snapshot.hasData) {
+                  return Text("Aucun joueur");
+                }
+
+                List<dynamic> players = [];
+                for (var element in snapshot.data!.docs) {
+                  players.add(element);
+                }
+                selectedPlayer = players[0]["pseudo"];
+
+                return Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  child: DropdownButtonFormField<String>(
+                    items: players.map((data) {
+                      return DropdownMenuItem<String>(
+                        value: data["pseudo"],
+                        child: Text(
+                          data["pseudo"],
+                        ),
+                      );
+                    }).toList(),
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder()
+                    ),
+                    value: selectedPlayer,
+                    onChanged: (value) {
+                      // print(value!);
+                        selectedPlayer = value!;
+                    },
+
+                  ),
+                );
+              }
             ),
             Container(
               margin: EdgeInsets.only(bottom: 10),
@@ -168,9 +211,9 @@ class _AddPlaqueState extends State<AddPlaque> {
                   ),
                   value: selectedType,
                   onChanged: (value) {
-                    setState(() {
+                    // setState(() {
                       selectedType = value!;
-                    });
+                    // });
                   }
               ),
             ),
@@ -182,10 +225,11 @@ class _AddPlaqueState extends State<AddPlaque> {
                   suffixIcon: Icon(Icons.event_note),
                   border: OutlineInputBorder(),
                 ),
+                mode: DateTimeFieldPickerMode.date,
                 onChanged: (DateTime? value) {
-                  setState(() {
+                  // setState(() {
                     selectedDate = value!;
-                  });
+                  // });
                 },
               ),
             ),
@@ -197,13 +241,14 @@ class _AddPlaqueState extends State<AddPlaque> {
                   if (_formKey.currentState!.validate()){
                     final plaqueName = plaqueNameController.text;
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Envoi en cours..."))
-                    );
-                    FocusScope.of(context).requestFocus(FocusNode());
+                    // ScaffoldMessenger.of(context).showSnackBar(
+                    //   const SnackBar(content: Text("Envoi en cours..."))
+                    // );
+                    // FocusScope.of(context).requestFocus(FocusNode());
 
                     // ajout dans la base de donnees
-                    CollectionReference plaquesRef = FirebaseFirestore.instance.collection("Plaques");
+                    // CollectionReference plaquesRef = FirebaseFirestore.instance.collection('Groupes').doc('GTHR040203').collection("Plaques");
+                    CollectionReference plaquesRef = widget.groupeRef.collection("Plaques");
                     plaquesRef.add({
                       'plaque': plaqueName,
                       'player': selectedPlayer,
@@ -211,20 +256,29 @@ class _AddPlaqueState extends State<AddPlaque> {
                       'type': selectedType
                     });
 
-                    CollectionReference playersRef = FirebaseFirestore.instance.collection("Players");
+                    // CollectionReference playersRef = FirebaseFirestore.instance.collection('Groupes').doc('GTHR040203').collection("Players");
+                    CollectionReference playersRef = widget.groupeRef.collection("Players");
                     // get player points before update
-                    final docRef = playersRef.doc(playersIds[selectedPlayer]);
+
+                    final docRef = playersRef.doc(selectedPlayer);
                     docRef.get().then(
                           (DocumentSnapshot doc) {
                         final data = doc.data() as Map<String, dynamic>;
-                        print(data);
                         final currentPoints = data["points"];
-                        print('printing current points : $currentPoints');
-                        final points = {"points": pointsPlaques[selectedType]! + currentPoints};
-                        print('printing final points : $points');
-                        docRef.set(points, SetOptions(merge: true));
+                        DateTime firstPlaque;
+                        try {
+                          firstPlaque = data["first_plaque"];
+                        }
+                        catch (e) {
+                          firstPlaque = selectedDate;
+                        }
+                        final newdata = {
+                          "points": pointsPlaques[selectedType]! + currentPoints,
+                          "first_plaque": firstPlaque
+                        };
+                        docRef.set(newdata, SetOptions(merge: true));
                         },
-                      onError: (e) => Text("Error getting document: $e"),
+                      onError: (e) => log("Error getting document: $e"),
                     );
 
                   }
@@ -232,7 +286,7 @@ class _AddPlaqueState extends State<AddPlaque> {
                 child: Text("Envoyer")
               ),
             )
-          ],
+                      ],
         ),
       ),
     );

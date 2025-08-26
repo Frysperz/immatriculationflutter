@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:immatriculationflutter/pages/app_page.dart';
+import 'package:immatriculationflutter/pages/creation_group_page.dart';
 import 'package:immatriculationflutter/pages/group_page.dart';
 import 'package:immatriculationflutter/pages/home_page.dart';
 import 'package:immatriculationflutter/pages/add_plaque.dart';
@@ -7,6 +9,7 @@ import 'package:immatriculationflutter/pages/join_group_page.dart';
 import 'package:immatriculationflutter/pages/players.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:immatriculationflutter/pages/rules_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 
 
@@ -40,10 +43,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: Text("Bienvenue"),),
-        body: GroupPage()
-    )
+      home: MyHome()
     );
     // return MaterialApp(
     //   home: Scaffold(
@@ -97,6 +97,100 @@ class _MyAppState extends State<MyApp> {
     //     ),
     //   ),
     // );
+  }
+}
+
+class MyHome extends StatefulWidget {
+  const MyHome({super.key});
+
+  @override
+  State<MyHome> createState() => _MyHomeState();
+}
+
+class _MyHomeState extends State<MyHome> {
+
+  bool _isChecked = false;
+
+  void getGroupIfExists(context) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      var rememberMe = prefs.getBool("remember_me") ?? false;
+      if (rememberMe) {
+        setState(() {
+          _isChecked = true;
+        });
+
+        var group = prefs.getString("groupId") ?? "";
+        var pass = prefs.getString("password") ?? "";
+        if (group != "" && pass != "") {
+          DocumentReference groupeRef = FirebaseFirestore.instance.collection("Groupes").doc(group);
+          Navigator.of(context).push(PageRouteBuilder(
+              pageBuilder: (_,__,___) => AppPage(groupeRef: groupeRef)
+          ));
+        }
+      }
+    } catch (e)
+    {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    getGroupIfExists(context);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Bienvenue"),),
+      // body: GroupPage()
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              margin: EdgeInsets.only(left: 15),
+              width: double.infinity,
+              child: Text("Vous pouvez rejoindre ou créer un groupe.", textAlign: TextAlign.left,),
+            ),
+            Expanded(child: SizedBox()),
+            FractionallySizedBox(
+              alignment: Alignment.center,
+              widthFactor: 0.5,
+              child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                        PageRouteBuilder(
+                            pageBuilder: (_,__,___) => CreationGroupPage()
+                        )
+                    );
+                  },
+                  child: Text("Créer un groupe")
+              ),
+            ),
+            SizedBox(height: 30,),
+            FractionallySizedBox(
+              alignment: Alignment.center,
+              widthFactor: 0.5,
+              child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                            pageBuilder: (_,__,___) => JoinGroupPage()
+                        )
+                    );
+                  },
+                  child: Text("Rejoindre un groupe")
+              ),
+            ),
+            Expanded(child: SizedBox())
+          ],
+        ),
+      ),
+    );
   }
 }
 

@@ -21,7 +21,7 @@ class _JoinGroupPageState extends State<JoinGroupPage> {
   final password = TextEditingController();
   final errorMessage = TextEditingController();
   late bool exist;
-  bool _isObscure = false;
+  bool _isObscure = true;
 
   void _handleRememberme(bool? value) {
     if (value != null) {
@@ -45,9 +45,6 @@ class _JoinGroupPageState extends State<JoinGroupPage> {
       var group = prefs.getString("groupId") ?? "";
       var pass = prefs.getString("password") ?? "";
       var rememberMe = prefs.getBool("remember_me") ?? false;
-      print(rememberMe);
-      print(group);
-      print(pass);
       if (rememberMe) {
         setState(() {
           _isChecked = true;
@@ -203,7 +200,7 @@ class _JoinGroupPageState extends State<JoinGroupPage> {
                         Navigator.push(
                             context,
                             PageRouteBuilder(
-                                pageBuilder: (_, __, ___) => AppPage()
+                                pageBuilder: (_, __, ___) => AppPage(groupeRef: groupeRef)
                             )
                         );
                       }

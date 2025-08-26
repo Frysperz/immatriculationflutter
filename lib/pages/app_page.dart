@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:immatriculationflutter/main.dart';
 import 'package:immatriculationflutter/pages/home_page.dart';
@@ -7,7 +8,8 @@ import 'package:immatriculationflutter/pages/rules_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppPage extends StatefulWidget {
-  const AppPage({super.key});
+  final DocumentReference<Object?> groupeRef;
+  const AppPage({ super.key, required this.groupeRef });
 
   @override
   State<AppPage> createState() => _AppPageState();
@@ -29,7 +31,7 @@ class _AppPageState extends State<AppPage> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Vous allez vous déconnecter, voulez-vous supprimer les données du groupe ?'),
+          title: const Text('Voulez-vous vous déconnecter?'),
           actions: <Widget>[
             TextButton(
               child: const Text('Retour'),
@@ -37,20 +39,23 @@ class _AppPageState extends State<AppPage> {
                 Navigator.of(context).pop();
               },
             ),
+            // TextButton(
+            //   child: const Text('Non', style: TextStyle(color: Colors.red,),),
+            //   onPressed: () {
+            //     Navigator.of(context).push(MaterialPageRoute(builder: (context) => MyApp()));
+            //   },
+            // ),
             TextButton(
-              child: const Text('Non', style: TextStyle(color: Colors.red,),),
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => MyApp()));
-              },
-            ),
-            TextButton(
-              child: const Text('Oui', style: TextStyle(color: Colors.blue,),),
+              child: const Text('Oui', style: TextStyle(color: Colors.red,),),
               onPressed: () async {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(duration: Duration(seconds: 1), content: Text("Suppression des données en cours..."))
-                );
+                // ScaffoldMessenger.of(context).showSnackBar(
+                //     const SnackBar(duration: Duration(seconds: 1), content: Text("Suppression des données en cours..."))
+                // );
                 SharedPreferences preferences = await SharedPreferences.getInstance();
-                await preferences.clear();
+                var rememberMe = preferences.getBool("remember_me") ?? false;
+                if (rememberMe) {
+                  await preferences.clear();
+                }
                 if (context.mounted) {
                   Navigator.of(context).push(
                       MaterialPageRoute(builder: (context) => MyApp()));
@@ -85,9 +90,9 @@ class _AppPageState extends State<AppPage> {
             ],
         ),
         body: [
-          HomePage(),
-          Players(),
-          AddPlaque(),
+          HomePage(groupeRef: widget.groupeRef),
+          Players(groupeRef: widget.groupeRef),
+          AddPlaque(groupeRef: widget.groupeRef),
           RulesPage(),
         ][_currentIndex],
         bottomNavigationBar: BottomNavigationBar(
